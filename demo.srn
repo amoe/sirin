@@ -1,0 +1,4 @@
+(score (pattern #:length 8 #:subdivisions 16 '(1 4 12 15)))
+
+; Next step is to make a beat with it.
+; Just a simple 4/4 using PATTERN will do.

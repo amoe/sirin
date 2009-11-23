@@ -1,0 +1,115 @@
+Design
+------
+
+Seems to form two languages:
+The "base" language which contains metalinguistic facilities as well
+as scoring functionality.
+For instance, it provides stuff like reading of live MIDI input.
+It also controls rendering.
+Functions have LONG-NAMES-LIKE-THIS.
+
+We also provide a set of one-character primitives to make scoring more
+comfortable.  It is intended that most scores be written in this form.
+We keep some basic csound ideas.  For instance, the first and most
+basic form shall be implemented first.
+
+INSTRUMENT
+
+(instrument #:number 1
+            #:start  0
+            #:length 2
+            #:fields '("8.00" ...))
+
+And an abbreviation:
+
+(i 1 0 2 8.00 ...)
+
+We provide functions that allow manipulation of this abbreviation
+table.  Abbreviations never allow keyword arguments, only positional
+parameters, but the use of the REARRANGE will allow the user to
+specify the keyword that each positional argument maps to.   This
+allows a free mutation of the 'language' from the metalanguage.
+
+
+But this in time.  Let's get to it first.
+
+
+Interface
+---------
+
+"sirin file.srn" will render a file to file.wav.
+
+
+Principle: we absolutely cannot allow it to make writing scores any
+more painful than it already is.
+
+More features
+-------------
+
+* We need the ability to write melodies.  Now that PianoRoll is gone,
+  probably the easiest way is to record MIDI events from an input and
+  notate them in a simplistic sirin format consisting only of
+  i-events.
+* We want the ability to generate random contour tables.
+* Architecturally, should every statement just be printed?
+  Nonprinting statements could return void.  Every statement could
+  return a list of i-events.
+
+
+
+Internal
+--------
+
+Each function generates a list of zero or more i-events.
+Each i-event has a field called TIME-BEHAVIOUR.
+This is a value that determines the position of the next note.
+'SIM does not advance time.
+'SEQ advances time by the length of the note.
+This allows the following:
+
+(note #:pitch 'c)
+(note #:pitch 'e)
+(note #:pitch 'f)
+
+Or more ambitiously:
+
+(n c)
+(n e)
+(n f)
+
+The driver procedure SCORE takes infinity arguments, each of which is
+a list of i-events.  It iterates through i-events keeping a global
+counter TIME.  If it encounters a 'SIM TIME-BEHAVIOUR, it will leave t
+alone and pass it to the next loop.  OTOH, if it encounters SEQ, it
+will enact the SEQ behaviour (ie add the length of the note to TIME
+and pass it to the next iteration.)
+It follows therefore that most i-events will be templates.
+That is, they will contain #f for key fields, such as start time.  If
+an i-event has a START field of #f, that means it is due to be filled
+in by the TIME-BEHAVIOUR.
+
+
+The truth is, though, that writing some music will probably be more
+instructive, so let's start creating some instruments.
+
+
+Yes we can create a score object that uses these time-behaviour fields
+to arrange templates.  The next function to add is (note pitch) which
+plays a 1-second note of pitch.
+
+
+Now, how to overlay a grid onto the timeline?  The next step should
+surely be the allowing of csound t statements.
+
+Unfortunately there's a nasty ambiguity.  What should this do?
+
+(seq (seq (note) (note))
+     (seq (note) (note)))
+
+(define current-time
+
+WANTLIST
+
+Ability to express oscillator frequencies for LFOs in terms of times
+in S rather than frequencies.
+
