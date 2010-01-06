@@ -113,3 +113,8 @@ WANTLIST
 Ability to express oscillator frequencies for LFOs in terms of times
 in S rather than frequencies.
 
+
+Sirin contains:
+
+* A step sequencer and a notation system for such.
+* Pitch notation system that doesn't suffer from cpspch's inaccuracy.

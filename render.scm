@@ -18,9 +18,13 @@
   (system (format "mplayer ~a"
                   (wave-form path))))
 
+(define (system/checked cmd)
+  (let ((worked? (system cmd)))
+    (when (not worked?) (error "command broke"))))
+
 (define (csound/checked output orchestra score)
   (let ((csound-output (backticks
-                         (format "csound -o ~a ~a ~a 2>&1"
+                         (format "csound -ndo ~a ~a ~a 2>&1"
                                  output orchestra score))))
     (let ((errors (filter (curry regexp-match #px"\\d+ errors in performance")
                     csound-output)))
