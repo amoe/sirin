@@ -1,0 +1,6 @@
+#! /bin/sh
+
+name=$1
+m4 -D _file="$name" /usr/local/share/amoe/csound.mk.m4 > "$name.mk"
+echo "; Orchestra" > "$name.orc"
+echo "; Score" > "$name.sco"
